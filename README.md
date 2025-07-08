@@ -26,6 +26,13 @@ A LaunchDarkly-powered middleware that routes requests to different service endp
 
 ## Running
 
+### Easy start (recommended)
+```bash
+./start.sh
+```
+This starts all services and runs the test script automatically.
+
+### Manual start
 Start all services in separate terminals:
 
 ```bash
