@@ -15,7 +15,11 @@ load_dotenv()
 
 # Set sdk_key to your LaunchDarkly key
 sdk_key = os.getenv("LAUNCHDARKLY_SDK_KEY")
-ldclient.set_config(Config(sdk_key))
+
+config = Config(sdk_key=sdk_key, omit_anonymous_contexts=True) 
+# omit_anonymous_contexts prevents index and identify events from being sent. Keeps traffic lean while still sending variation() and track() events.
+
+ldclient.set_config(config)
 
 app = FastAPI(title="LD Infra Proxy", description="LaunchDarkly-powered service routing middleware")
 
@@ -26,9 +30,11 @@ class ProxyRequest(BaseModel):
 @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
 async def proxy_request(request: Request, path: str = ""):
     # Create single LaunchDarkly context for this request
+    # set anonymous to True to prevent request contexts from cluttering the Contexts List
     context = Context.builder(str(uuid.uuid4())) \
         .set("kind", "request") \
         .set("timestamp", time.time()) \
+        .set("anonymous", True) \
         .build()
     
     try:
