@@ -18,17 +18,17 @@ sdk_key = os.getenv("LAUNCHDARKLY_SDK_KEY")
 
 '''
 Config Notes:
-Relevant configuration options for request-based events are included below, using their default values. 
+Relevant configuration options for request-based events are included below. 
 If you see the logged warning "Exceeded event queue capacity. Increase capacity to avoid dropping events.", you should adjust the events_max_pending and flush_interval.
 Full Python configuration documentation: https://launchdarkly-python-sdk.readthedocs.io/en/latest/api-main.html#module-ldclient.config
 '''
 
 config = Config(
     sdk_key=sdk_key, 
-    omit_anonymous_contexts=True, # prevents index and identify events from being sent. Keeps traffic lean while still sending variation() and track() events.
-    events_max_pending=10000, # limits the number of events that can be buffered in memory.
-    flush_interval=5, # sets the interval at which events are flushed to LaunchDarkly.
-    enable_event_compression=False # compresses events before sending them to LaunchDarkly. Default is False. Setting to True will slightly increase CPU usage, but likely will significantly reduce bandwidth.
+    omit_anonymous_contexts=True, # prevents index and identify events from being sent. Defaults to False. Keeps traffic lean while still sending variation() and track() events.
+    events_max_pending=10000, # limits the number of events that can be buffered in memory. Defaults to 10000.
+    flush_interval=5, # sets the interval at which events are flushed to LaunchDarkly. Defaults to 5 seconds.
+    enable_event_compression=True # compresses events before sending them to LaunchDarkly. Defaults to False. Setting to True will slightly increase CPU usage, but likely will significantly reduce bandwidth.
     ) 
 
 
