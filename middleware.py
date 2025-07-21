@@ -84,7 +84,19 @@ async def proxy_request(request: Request, path: str = ""):
                 end_time = time.time()
                 response_time = end_time - start_time
                 ldclient.get().track("latency", context, metric_value=response_time)
-                
+
+                # Track error responses from downstream service
+                if 400 <= response.status_code < 500:
+                    ldclient.get().track("400-error", context, data={
+                        "status_code": response.status_code,
+                        "endpoint": target_endpoint
+                    })
+                elif 500 <= response.status_code < 600:
+                    ldclient.get().track("500-error", context, data={
+                        "status_code": response.status_code,
+                        "endpoint": target_endpoint
+                    })
+
                 # Return response as-is
                 return Response(
                     content=response.content,
